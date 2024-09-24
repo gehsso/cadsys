@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block titulo_conteudo %} Formulário de Produtos {% endblock titulo_conteudo %}
+
+{% block conteudo %} 
+<form method="post">
+    {% csrf_token %}    
+    {{ form.as_p }}
+    <p>
+    <label for="id_categoria_nome">Categoria:</label>
+    <!-- autocomplete -->
+    <input type="text" class="form-control autocomplete" id="id_categoria_nome" data-url="{% url 'buscar_dados' 'home.Categoria' %}" data-hidden="#id_categoria" >
+    </p>
+    <button class="btn btn-primary btn-sm" type="submit">Salvar</button>
+</form>
+{% endblock conteudo %}
+
+{% block javascript %}{% endblock javascript %}

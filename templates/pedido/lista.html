@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block titulo_conteudo %} Listagem de Pedidos {% endblock titulo_conteudo %}
+
+{% block conteudo %} 
+
+<div class="barrabotoes">
+  <button onClick="location='{% url "form_cliente" %}'" type="button" class="btn btn-primary btn-sm">Inserir Novo</button>
+</div>
+
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Cliente</th>
+        <th>Data</th>
+        <th>Situação</th>
+        <th>Produtos</th>
+        
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for item in lista %}
+      <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.cliente.nome }}</td>
+        <td>{{ item.data_pedidof}}</td>
+        <td>{{ item.get_status_display }}</td>
+        <td>{{ item.qtdeItens}}</td>        
+        <td>
+          <button onClick="location='{% url 'detalhar_pedido' item.id %}'" type="button" class="btn btn-primary btn-sm">Detalhes</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+{% endblock conteudo %}

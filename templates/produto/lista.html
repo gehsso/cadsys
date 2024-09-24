@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block titulo_conteudo %} Listagem de Produtos {% endblock titulo_conteudo %}
+
+{% block conteudo %} 
+
+<div class="barrabotoes">
+<button onClick="location='{% url "form_produto" %}'" type="button" class="btn btn-primary btn-sm">Inserir Novo</button>
+</div>
+
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Preço</th>
+        <th>Categoria</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for produto in produtos %}
+      <tr>
+        <td>{{ produto.nome }}</td>
+        <td>{{ produto.preco_formatado }}</td>
+        <td>{{ produto.categoria }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+{% endblock conteudo %}

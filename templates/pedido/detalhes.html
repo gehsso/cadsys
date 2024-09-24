@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block titulo_conteudo %} Detalhes do Pedido #{{ pedido.id }} {% endblock titulo_conteudo %}
+
+{% block conteudo %} 
+
+<!-- templates/pedido/detalhar_pedido.html -->
+<p><strong>Cliente:</strong> {{ pedido.cliente.nome }}</p>
+<p><strong>Data do Pedido:</strong> {{ pedido.data_pedido|date:"d/m/Y H:i" }}</p>
+<p><strong>Status:</strong> {{ pedido.get_status_display }}</p>
+
+<hr>
+<!-- Formulário para adicionar novos produtos -->
+<h5>Adicionar Produto</h5>
+<form method="POST">
+    {% csrf_token %}
+    <p>
+     <label for="id_produto_nome">Produto:</label>    
+    <input type="text" class="form-control autocomplete" id="id_produto_nome" data-url="{% url 'buscar_dados' 'home.Produto' %}" data-hidden="#id_produto" >
+    </p>
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary btn-sm">Adicionar Produto</button>
+</form>
+
+<!-- Itens já adicionados ao pedido -->
+<h5>Itens do Pedido</h5>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Preço Unitário</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in pedido.itempedido_set.all %}
+        <tr>
+            <td>{{ item.produto.nome }}</td>
+            <td>{{ item.qtde }}</td>
+            <td>{{ item.preco }}</td>
+            <td>{{ item.total }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<p>Total do Pedido: {{ pedido.total }}</p>
+<hr>
+
+
+<button id="confirm-btn" class="btn btn-danger" data-bs-toggle="confirmation" data-bs-title="Você tem certeza?" data-btn-ok-label="Sim" data-btn-cancel-label="Não" data-bs-placement="top">
+    Excluir
+  </button>
+
+
+{% endblock conteudo %}
+
+{% block javascript %}
+<script>
+    $('#confirm-btn').confirmation({
+      rootSelector: '#confirm-btn',
+      title: 'Você tem certeza?',
+      btnOkLabel: 'Sim',
+      btnCancelLabel: 'Não',
+      onConfirm: function() {
+        alert('Confirmado!');
+      },
+      onCancel: function() {
+        alert('Cancelado!');
+      }
+    });
+  </script>
+
+{% endblock javascript %}
