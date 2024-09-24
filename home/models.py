@@ -1,6 +1,7 @@
-import locale
+#import locale
 from django.db import models
 
+from utils.context_processors import formatar_moeda
 
 #locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
@@ -41,7 +42,8 @@ class Produto(models.Model):
     
     @property
     def preco_formatado(self):
-        return locale.currency(self.preco, grouping=True) # Formata como moeda brasileira
+        return formatar_moeda(self.preco)
+        #return locale.currency(self.preco, grouping=True) # Formata como moeda brasileira
     
     
     ############################### PEDIDO ##############################################
@@ -77,7 +79,8 @@ class Pedido(models.Model):
     def total(self):
         """Calcula o total de todos os itens no pedido, formatado como moeda local"""
         total = sum(item.qtde * item.preco for item in self.itempedido_set.all())
-        return locale.currency(total, grouping=True)    
+        return formatar_moeda(total)
+        #return locale.currency(total, grouping=True)    
     
     @property
     def qtdeItens(self):
@@ -95,5 +98,10 @@ class ItemPedido(models.Model):
 
     @property
     def total(self):
-        return locale.currency(self.preco*self.qtde, grouping=True) # Formata como moeda brasileira
+        return formatar_moeda(self.preco*self.qtde)
+        #return locale.currency(self.preco*self.qtde, grouping=True) # Formata como moeda brasileira
+    
+    @property
+    def preco_formatado(self):
+        return formatar_moeda(self.preco)
     
