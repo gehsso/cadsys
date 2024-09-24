@@ -1,7 +1,8 @@
 import locale
 from django.db import models
 
-locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+#locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+
 
 # Create your models here.
 
