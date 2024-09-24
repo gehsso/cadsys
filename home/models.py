@@ -1,11 +1,10 @@
 import locale
 from django.db import models
 
-# Defina o locale apenas se o módulo estiver disponível
 
 #locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
-locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')  # ou algum outro locale disponível
+#locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')  # ou algum outro locale disponível
 
 
 # Create your models here.
