@@ -6,6 +6,7 @@
 
 <div class="barrabotoes">
   <button onClick="location='{% url "form_cliente" %}'" type="button" class="btn btn-primary btn-sm">Inserir Novo</button>
+  <button onClick="location='{% url "cliente" %}'" type="button" class="btn btn-primary btn-sm">Recarregar</button>
 </div>
 
 <table class="table table-hover">
@@ -19,14 +20,19 @@
       </tr>
     </thead>
     <tbody>
-    {% for item in lista %}
+    {% for cliente in lista_clientes %}
       <tr>
-        <td>{{ item.id }}</td>
-        <td>{{ item.nome }}</td>
-        <td>{{ item.cpf }}</td>
-        <td>{{ item.datanascimento }}</td>
+        <td>{{ cliente.id }}</td>
+        <td>{{ cliente.nome }}</td>
+        <td>{{ cliente.cpf }}</td>
+        <td>{{ cliente.datanascimento }}</td>
         <td>
-          <button onClick="location='{% url 'novo_pedido' item.id %}'" type="button" class="btn btn-primary btn-sm">Novo Pedido</button>
+          <button onClick="location='{% url 'novo_pedido' cliente.id %}'" type="button" class="btn btn-primary btn-sm">Novo Pedido</button>
+         
+          <a href="{% url 'editar_cliente' cliente.id %}" class="btn btn-warning btn-sm">Editar</a>
+ 
+          <a href="{% url 'remover_cliente' cliente.id %}" class="btn btn-danger btn-sm" 
+          onclick="return confirm('Tem certeza que deseja remover este registro?');">Remover</a>
         </td>
       </tr>
       {% endfor %}

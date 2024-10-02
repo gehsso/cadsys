@@ -16,10 +16,11 @@
     {% csrf_token %}
     <p>
      <label for="id_produto_nome">Produto:</label>    
-    <input type="text" class="form-control autocomplete" id="id_produto_nome" data-url="{% url 'buscar_dados' 'home.Produto' %}" data-hidden="#id_produto" >
+    <input type="text" class="form-control autocomplete" id="id_produto_nome" data-url="{% url 'buscar_dados' 'home.Produto' %}" value="{{item_pedido.produto.nome}}" data-hidden="#id_produto" >
     </p>
     {{ form.as_p }}
-    <button type="submit" class="btn btn-primary btn-sm">Adicionar Produto</button>
+    <button type="submit" class="btn btn-primary btn-sm">Salvar Produto</button>
+    <button type="button" onclick="location='{% url 'form_pagamento' pedido.id %}'" class="btn btn-primary btn-sm">Registrar Pagamento</button>
 </form>
 
 <!-- Itens já adicionados ao pedido -->
@@ -29,8 +30,9 @@
         <tr>
             <th>Produto</th>
             <th>Quantidade</th>
-            <th>Preço Unitário</th>
-            <th>Total</th>
+            <th>Preço Unitário (R$)</th>
+            <th>Total (R$)</th>
+            <th>Ações</th>
         </tr>
     </thead>
     <tbody>
@@ -40,17 +42,23 @@
             <td>{{ item.qtde }}</td>
             <td>{{ item.preco_formatado }}</td>
             <td>{{ item.total }}</td>
+            <td>
+              <a href="{% url 'editar_item_pedido' item.id %}" class="btn btn-warning btn-sm">Editar</a>
+              <a href="{% url 'remover_item_pedido' item.id %}" class="btn btn-danger btn-sm" 
+              onclick="return confirm('Tem certeza que deseja remover este item?');">Remover</a>
+            </td>         
         </tr>
         {% endfor %}
     </tbody>
 </table>
-<p>Total do Pedido: {{ pedido.total }}</p>
+<p>Total do Pedido: R$ {{ pedido.total }}</p>
+<p>Total Pago: R$ {{ pedido.total_pago }}</p>
+<p>Débito: R$ {{ pedido.debito }}</p>
 <hr>
 
 
-<button id="confirm-btn" class="btn btn-danger" data-bs-toggle="confirmation" data-bs-title="Você tem certeza?" data-btn-ok-label="Sim" data-btn-cancel-label="Não" data-bs-placement="top">
-    Excluir
-  </button>
+<a href="{% url 'remover_pedido' pedido.id %}" class="btn btn-danger btn-sm" 
+onclick="return confirm('Tem certeza que deseja remover este registro?');">Excluir</a>
 
 
 {% endblock conteudo %}

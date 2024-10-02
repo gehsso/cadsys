@@ -14,6 +14,8 @@ from pathlib import Path
 
 import pymysql
 
+import dj_database_url
+
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,8 +29,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-t_-cl2580se4quu7kbgb3pfsgmvx_966^1xby%l8_2bwfgjf9&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False  
-ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app']
+DEBUG = True  
+ALLOWED_HOSTS = ['localhost','127.0.0.1', '.vercel.app']
 
 
 # Application definition
@@ -86,7 +88,7 @@ WSGI_APPLICATION = 'pweb.wsgi.application'
 #        'NAME': BASE_DIR / 'db.sqlite3',
 #    }
 #}
-
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -97,7 +99,11 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+"""
 
+DATABASES = {
+    'default': dj_database_url.parse('postgres://default:NgpZud4Xq2vw@ep-curly-pond-a4x7fala.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require')
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -121,12 +127,20 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
+
+# definie o formato da data dd/mm/yyyy
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Fortaleza'
 USE_I18N = True
 USE_TZ = False
 
+# formatação de números e valores monetários de acordo com a localização (localização regional) da aplicação.
+USE_L10N = True #Habilita a localização (l10n = localization) no Django, ou seja, faz com que o Django ajuste a formatação de datas, números e outros formatos com base no idioma 
+USE_THOUSAND_SEPARATOR = True #Define se o Django deve usar o separador de milhar ao renderizar números.
+DECIMAL_SEPARATOR = ',' #Especifica o caractere que deve ser usado como separador decimal ao formatar números.
+THOUSAND_SEPARATOR = '.' #Define o separador de milhar a ser usado. Aqui, o ponto . será usado como separador de milhar, por exemplo, 1.234.567.
 
+#
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 

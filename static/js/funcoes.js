@@ -28,18 +28,3 @@ function autoComplete(inputSelector) {
         }
     });
 }
-
-function formatarData(valor) {
-    // Remove qualquer caractere que não seja número
-    valor = valor.replace(/\D/g, '');
-
-    // Adiciona as barras na posição correta
-    if (valor.length > 2) {
-        valor = valor.slice(0, 2) + '/' + valor.slice(2);
-    }
-    if (valor.length > 5) {
-        valor = valor.slice(0, 5) + '/' + valor.slice(5);
-    }
-    
-    return valor;
-}

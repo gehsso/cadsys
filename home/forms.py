@@ -2,10 +2,11 @@ from django import forms
 from .models import *
 import datetime
 from django.core.exceptions import ValidationError
-
+from decimal import Decimal, InvalidOperation
 
 
 class ProdutoForm(forms.ModelForm):
+    #preco = forms.CharField()  # Substitui o FloatField ou DecimalField por um CharField
     class Meta:
         model = Produto
         fields = ['nome', 'preco', 'categoria']
@@ -15,13 +16,26 @@ class ProdutoForm(forms.ModelForm):
             # em form.html de produto o input categoria e colocado no codigo diretamente
             'categoria': forms.HiddenInput(),  # Campo oculto para armazenar o ID
             'nome':forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome'}),
-            'preco':forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Preço'}),
+            # a classe money mascara a entreda de valores monetários, está em base.html
+            #  jQuery Mask Plugin
+            'preco':forms.TextInput(attrs={
+                'class': 'money form-control',
+                'maxlength': 500,
+                'placeholder': '0.000,00'
+            }),
         }
         
         labels = {
             'nome': 'Nome do Produto',
             'preco': 'Preço do Produto',
         }
+        
+    def __init__(self, *args, **kwargs):
+        super(ProdutoForm, self).__init__(*args, **kwargs)
+        self.fields['preco'].localize = True
+        self.fields['preco'].widget.is_localized = True    
+
+
 
 class ClienteForm(forms.ModelForm):
     class Meta:
@@ -29,7 +43,7 @@ class ClienteForm(forms.ModelForm):
         fields = ['nome', 'cpf', 'datanasc']
         widgets = {
             'nome':forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome'}),
-            'cpf':forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'C.P.F'}),
+            'cpf':forms.TextInput(attrs={'class': 'cpf form-control', 'placeholder': 'C.P.F'}),
             'datanasc': forms.DateInput(attrs={'class': 'data form-control', 'placeholder': 'Data de Nascimento'}, format='%d/%m/%Y'),
         }
         
@@ -73,3 +87,38 @@ class ItemPedidoForm(forms.ModelForm):
         self.fields['qtde'].widget.attrs.update({'class': 'form-control'})  # Adiciona classe bootstrap
         self.fields['produto'].widget.attrs.update({'class': 'form-control'})  # Adiciona classe bootstrap
     """
+    
+class EstoqueForm(forms.ModelForm):
+    class Meta:
+        model = Estoque
+        fields = ['produto','qtde']
+        
+        widgets = {
+            'produto': forms.HiddenInput(),  # Campo oculto para armazenar o ID
+            'qtde':forms.TextInput(attrs={'class': 'inteiro form-control',}),
+    }
+        
+class PagamentoForm(forms.ModelForm):
+    class Meta:
+        model = Pagamento
+        fields = ['pedido','forma','valor']
+        widgets = {
+            'pedido': forms.HiddenInput(),  # Campo oculto para armazenar o ID
+            'forma': forms.Select(attrs={'class': 'form-control'}),  # Usando Select para renderizar as opções
+            'valor':forms.TextInput(attrs={
+                'class': 'money form-control',
+                'maxlength': 500,
+                'placeholder': '0.000,00'
+            }),
+         }
+        
+    def __init__(self, *args, **kwargs):
+            super(PagamentoForm, self).__init__(*args, **kwargs)
+            self.fields['valor'].localize = True
+            self.fields['valor'].widget.is_localized = True       
+    
+    def clean_valor(self):
+        valor = self.cleaned_data.get('valor')
+        if valor <= 0:
+            raise forms.ValidationError("O valor deve ser maior que zero.")
+        return valor

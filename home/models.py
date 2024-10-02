@@ -1,7 +1,8 @@
-#import locale
+import locale
 from django.db import models
 
-from utils.context_processors import formatar_moeda
+
+#locale.setlocale(locale.LC_ALL, "Portuguese_Brazil.1252")
 
 #locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
@@ -34,7 +35,7 @@ class Categoria(models.Model):
 
 class Produto(models.Model):
     nome = models.CharField(max_length=100)
-    preco = models.DecimalField(max_digits=10, decimal_places=2)
+    preco = models.DecimalField(max_digits=10, decimal_places=2,blank=False)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -42,11 +43,16 @@ class Produto(models.Model):
     
     @property
     def preco_formatado(self):
-        return formatar_moeda(self.preco)
-        #return locale.currency(self.preco, grouping=True) # Formata como moeda brasileira
+        return self.preco
     
+    @property
+    def estoque(self):
+        # Tenta buscar o estoque, se não existir, cria um novo com qtde 0
+        estoque_item, created = Estoque.objects.get_or_create(produto=self, defaults={'qtde': 0})
+        return estoque_item
+   
     
-    ############################### PEDIDO ##############################################
+############################### PEDIDO ##############################################
 class Pedido(models.Model):
     NOVO = 1
     EM_ANDAMENTO = 2
@@ -70,7 +76,7 @@ class Pedido(models.Model):
     
     @property
     def data_pedidof(self):
-        """Retorna a data de nascimento no formato DD/MM/AAAA"""
+        """Retorna a data no formato DD/MM/AAAA HH:MM"""
         if self.data_pedido:
             return self.data_pedido.strftime('%d/%m/%Y %H:%M')
         return None
@@ -79,14 +85,28 @@ class Pedido(models.Model):
     def total(self):
         """Calcula o total de todos os itens no pedido, formatado como moeda local"""
         total = sum(item.qtde * item.preco for item in self.itempedido_set.all())
-        return formatar_moeda(total)
-        #return locale.currency(total, grouping=True)    
+        return total
+
     
     @property
     def qtdeItens(self):
         """Conta a qtde de itens no pedido, """
         return self.itempedido_set.count()   
-
+    
+    @property
+    def pagamentos(self):
+        return Pagamento.objects.filter(pedido=self)   
+    
+    @property
+    def total_pago(self):
+        """Calcula o total de todos os pagamentos no pedido"""
+        total = sum(pagamento.valor for pagamento in self.pagamentos.all())
+        return total
+    
+    @property
+    def debito(self):
+        return self.total - self.total_pago
+                        
 class ItemPedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
@@ -98,10 +118,44 @@ class ItemPedido(models.Model):
 
     @property
     def total(self):
-        return formatar_moeda(self.preco*self.qtde)
-        #return locale.currency(self.preco*self.qtde, grouping=True) # Formata como moeda brasileira
-    
+        return (self.preco*self.qtde)
+     
     @property
     def preco_formatado(self):
-        return formatar_moeda(self.preco)
+        return self.preco
     
+################################## ESTOQUE ######################################
+    
+class Estoque(models.Model):
+    produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
+    qtde = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.produto.nome} - Quantidade: {self.qtde}'
+    
+    
+############################### PAGAMENTO ##############################################
+class Pagamento(models.Model):
+    DINHEIRO = 1
+    CARTAO = 2
+    PIX = 3
+    OUTRA = 4
+
+    FORMA_CHOICES = [
+        (DINHEIRO, 'Dinheiro'),
+        (CARTAO, 'Cartão'),
+        (PIX, 'Pix'),
+        (OUTRA, 'Outra'),
+    ]
+
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    forma = models.IntegerField(choices=FORMA_CHOICES)
+    valor = models.DecimalField(max_digits=10, decimal_places=2,blank=False)
+    data_pgto = models.DateTimeField(auto_now_add=True)
+    
+    @property
+    def data_pgtof(self):
+        """Retorna a data no formato DD/MM/AAAA HH:MM"""
+        if self.data_pgto:
+            return self.data_pgto.strftime('%d/%m/%Y %H:%M')
+        return None

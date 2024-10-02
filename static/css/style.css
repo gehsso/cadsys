@@ -91,3 +91,11 @@ h5{
     margin: 5px;
 
 }
+
+
+.errorlist {
+    list-style-type: none; /* Remove os pontinhos */
+
+ 
+}
+
