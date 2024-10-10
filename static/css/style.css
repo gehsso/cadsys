@@ -99,3 +99,15 @@ h5{
  
 }
 
+.canvas {
+        display: block;
+        margin: 20px auto; /* Centraliza horizontalmente e adiciona margem superior */
+        border:1px solid #4e4c4cfa;
+        border-radius: 10px;
+        padding: 10px;
+}
+
+.fieldset {
+    border: 1px solid rgba(0, 0, 0, 0.2); /* Borda clarinha */
+    font-size: 1rem;
+  }

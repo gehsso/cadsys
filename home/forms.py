@@ -9,13 +9,16 @@ class ProdutoForm(forms.ModelForm):
     #preco = forms.CharField()  # Substitui o FloatField ou DecimalField por um CharField
     class Meta:
         model = Produto
-        fields = ['nome', 'preco', 'categoria']
+        fields = ['nome', 'preco', 'categoria','img_base64']
+       
+
         widgets = {
             # categoria fica oculta pq foi implementado autocomplete com jquery
             # em javascript/Funcoes.js
             # em form.html de produto o input categoria e colocado no codigo diretamente
             'categoria': forms.HiddenInput(),  # Campo oculto para armazenar o ID
             'nome':forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome'}),
+            'img_base64': forms.HiddenInput(), 
             # a classe money mascara a entreda de valores monetários, está em base.html
             #  jQuery Mask Plugin
             'preco':forms.TextInput(attrs={
