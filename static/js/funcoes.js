@@ -58,7 +58,7 @@ function autoComplete(inputSelector) {
 
                 // Calcula a posição para centralizar a imagem no canvas
                 var offsetX = (canvasWidth - newWidth) / 2;
-                var offsetY = (canvasHeight - newHeight) / 2;
+                var offsetY = (canvasHeight - newHeight) / 2; 
 
                 // Limpa o canvas e desenha a imagem redimensionada
                 ctx.clearRect(0, 0, canvasWidth, canvasHeight);
